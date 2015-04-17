@@ -7,10 +7,6 @@ Hill climbing aka Gradient Desent is local search method.
 
 import random
 solutions = [3,5,6,7,8,6,4,3,2,5,6,7,9,23,35,12,6,5,4,10,15,13,8,9,12,15,4]
-
-"""
-Repeat the local search to extend the algorithm to Iterated Local Search
-"""
     
 def HillClimbing():
     s = random.randrange(len(solutions) - 1)    
@@ -25,14 +21,14 @@ def HillClimbing():
     return solutions[s]
  
 iter = 5
-Best_ITL = 0
+Best_ILS = 0 # Iterative Local Search extends Hill Climbing
 
 for x in range(0, iter):
     s = HillClimbing()
-    if(Best_ITL < s):
-        Best_ITL = s
+    if(Best_ILS < s):
+        Best_ILS = s
        
-print("Best solutions", Best_ITL)
+print("Best solutions", Best_ILS)
 
 """
 TO DO
