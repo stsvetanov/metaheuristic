@@ -15,13 +15,14 @@ Repeat the local search to extend the algorithm to Iterated Local Search
 def HillClimbing():
     s = random.randrange(len(solutions) - 1)    
     print("Initial Value", solutions[s], "Initial Index", s)
+    
     while(solutions[s] < solutions[s + 1] or solutions[s] < solutions[s - 1]):
         if (solutions[s] < solutions[s + 1]):       
             s = s + 1
         else:
             s = s - 1
         print("Current best solution value: ", solutions[s])
-	return solutions[s]
+    return solutions[s]
  
 iter = 5
 Best_ITL = 0
