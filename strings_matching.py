@@ -11,21 +11,30 @@ Example:
 
 from random_search import random_search
 from ga_search import ga_search
+from abc_search import abc_search
+from local_search import local_search
 
-TARGET = '00000000'
-NUMBER_OF_ITERATIONS = 40
+TARGET = '0000000000000000000000000000000000000000000000000000000000000000'
+NUMBER_OF_ITERATIONS = 150
 
-POPULATION_SIZE = 1000
+POPULATION_SIZE = 1024 # Needed for ga_search only
 
 
 def main():
+    # choices = {'a': 1, 'b': 2}
+    # result = choices.get(key, 'default')
+
+    user_input = input("Type: \n 1 for Random Search \n 2 for GA \n 3 for ABC \n 4 for Local Search \n")
     print('Target solution: {}'.format(TARGET))
-    #random_search(TARGET, NUMBER_OF_ITERATIONS)
-    ga_search(TARGET, NUMBER_OF_ITERATIONS, POPULATION_SIZE)
+    if user_input == '1':
+        random_search(TARGET, NUMBER_OF_ITERATIONS)
+    elif user_input == '2':
+        ga_search(TARGET, NUMBER_OF_ITERATIONS, POPULATION_SIZE)
+    elif user_input == '3':
+        abc_search(TARGET, NUMBER_OF_ITERATIONS)
+    elif user_input == '4':
+        local_search(TARGET, NUMBER_OF_ITERATIONS)
 
 
 if __name__ == '__main__':
     main()
-
-
-
