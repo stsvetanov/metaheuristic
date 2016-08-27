@@ -2,6 +2,7 @@ from utils import generate_solution, estimate_solution, mutate_solution
 
 
 def local_search(target, number_of_moves=50, solution=None):
+
     if solution is None:
         solution_size = len(target)
         s = generate_solution(solution_size)
@@ -16,5 +17,6 @@ def local_search(target, number_of_moves=50, solution=None):
         if ee < e:  # If neighbor solution is better that current, accept it as current.
             e = ee
             s = ss
+            # print("New best {} -> {}".format(s,e))
     # print("Best Solution:", s, " Value:", e)
     return s

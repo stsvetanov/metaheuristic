@@ -1,6 +1,7 @@
 import random
 from random import shuffle
 import math
+import matplotlib.pyplot as plt
 
 
 def create_tsp_map(number_of_cities):
@@ -48,12 +49,35 @@ def estimate_population_tsp(population: list, target: str) -> dict:
 
 def generate_neighbor_solution_tsp(solution):
     solution_len = len(solution)
-    element1 = random.randint(0, solution_len - 1) # pick two random elements to swap
+    neighbor_solution = []
+    for city in solution:
+        neighbor_solution.append(city)
+
+    el1 = random.randint(0, solution_len - 2) # pick two random elements to swap
+    # element2 = random.randint(0, solution_len - 1)
+    neighbor_solution[el1], neighbor_solution[el1 + 1] = neighbor_solution[el1 + 1], neighbor_solution[el1]
+    return neighbor_solution
+
+
+def generate_subglobal_solution_tsp(solution):
+    solution_len = len(solution)
+    subglobal_solution = []
+    for city in solution:
+        subglobal_solution.append(city)
+    element1 = random.randint(0, solution_len - 2) # pick two random elements to swap
     element2 = random.randint(0, solution_len - 1)
-    solution[element1], solution[element2] = solution[element2], solution[element1]
-    return solution
+    subglobal_solution[element1], subglobal_solution[element2] = subglobal_solution[element2], subglobal_solution[element1]
+    return subglobal_solution
 
 
 def select_population(estimated_population: dict):
     selection = sorted(estimated_population, key=lambda x: estimated_population[x])
     return selection
+
+################## Visualization ##########################
+
+
+def plot_tsp_map(tsp_map):
+    plt.plot(tsp_map[0], tsp_map[1], 'ro')
+    plt.axis([0, 10, 0, 10])
+    plt.show()

@@ -4,7 +4,7 @@ from local_search import local_search
 
 def abc_search(target, number_of_iterations=50):
     scouts = 10
-    workers = 50
+    workers = 100
     best_solution = None
     global_solutions = generate_population(target, scouts)
 
@@ -40,7 +40,7 @@ def workers_activities(target, workers, selected_global_solutions):
     dev = 2
     for s in selected_global_solutions:
         for _ in range(int(workers / dev)):
-            solutions.append(local_search(target, 50, s))
+            solutions.append(local_search(target, 100, s))
         dev *= 2
         if counter > 3:
             break
