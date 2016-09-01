@@ -1,6 +1,7 @@
 from utils_tsp import create_tsp_map, generate_population_tsp, estimate_population_tsp, select_population, estimate_solution_tsp
 from utils_tsp import generate_subglobal_solution_tsp
 from tsp_local_search import tsp_local_search
+import random
 
 
 def tsp_ga(number_of_cities=20, number_of_iterations=50, population_size = 100):
@@ -17,7 +18,7 @@ def tsp_ga(number_of_cities=20, number_of_iterations=50, population_size = 100):
         estimated_offsprings = estimate_population_tsp(offsprings, target)
         selected_offsprings = select_population(estimated_offsprings)
 
-        best_solution_in_generation = selected_local_solutions[0]
+        best_solution_in_generation = selected_offsprings[0]
         best_solution_in_generation_score = estimate_solution_tsp(best_solution_in_generation, tsp_map)
 
         print("Best solution in iter {} is {} -> {}".format(iterations_counter, best_solution_in_generation, best_solution_in_generation_score))
@@ -34,5 +35,17 @@ def tsp_ga(number_of_cities=20, number_of_iterations=50, population_size = 100):
     print("Best solution {} -> {}".format(best_solution, estimate_solution_tsp(best_solution, tsp_map)))
 
 
-def crossover_tsp():
+def crossover_tsp(elite_solutions):
+    parent1 = elite_solutions[0]
+    parent2 = elite_solutions[1]
+    cross_point1 = random.randint(0, len(parent1))
+    cross_point2 = random.randint(0, len(parent2))
+    consecutive_alleles = parent1[cross_point1, cross_point2]
+    offspring1 = 1
+    '''
+    TODO
+
+    Complete the function using order one crossover
+    http://www.rubicite.com/Tutorials/GeneticAlgorithms/CrossoverOperators/Order1CrossoverOperator.aspx
+    '''
     pass

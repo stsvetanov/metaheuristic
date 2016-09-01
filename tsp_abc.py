@@ -4,7 +4,8 @@ from tsp_local_search import tsp_local_search
 
 
 def tsp_abc(number_of_cities=20, number_of_iterations=50):
-    scouts = 15
+    scouts = 151
+
     workers = 100
     best_solution = None
 

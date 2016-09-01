@@ -21,8 +21,6 @@ def tsp_local_search(number_of_cities=20, number_of_moves=50, solution=None, tsp
         ss = generate_neighbor_solution_tsp(s)
         ee = estimate_solution_tsp(ss, tsp_map)
         # print("Neighbor Solution ", ss, "Value ", ee)
-        # if best_solution is None:
-        #     best_solution = s
 
         if ee < e:  # If neighbor solution is better that current, accept it as current.
             e = ee
