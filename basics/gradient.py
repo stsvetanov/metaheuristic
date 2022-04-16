@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Hill Climbing aka Gradient Descent is local search method.
+Hill Climbing aka Gradient Descent
 
 @author: Simeon Tsvetanov
 """
@@ -26,7 +26,8 @@ def gradient():
             s += 1
         print("Current best solution value: ", solutions[s])
     return solutions[s]
- 
+
+
 number_of_iteration = 1
 best_solution = 0 # Iterative Local Search extends Hill Climbing
 

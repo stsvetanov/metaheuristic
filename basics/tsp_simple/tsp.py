@@ -2,9 +2,7 @@
 Solves TSP problem
 '''
 
-from tsp_abc import tsp_abc
-from tsp_local_search import tsp_local_search
-from tsp_ga import tsp_ga
+from utils import tsp_abc, tsp_local_search, tsp_ga
 
 NUMBER_OF_ITERATIONS = 250
 NUMBER_OF_CITIES = 25
@@ -13,7 +11,7 @@ POPULATION_SIZE = 150
 
 def main():
 
-    user_input = input("Type: \n 1 for TSP-ABC \n 2 for TSP-Local \n")
+    user_input = input("Type: \n 1 for TSP-ABC \n 2 for TSP-Local \n 3 for TSP-GA \n")
     print('Solving TSP with {} cities'.format(NUMBER_OF_CITIES))
     if user_input == '1':
         tsp_abc(NUMBER_OF_CITIES, NUMBER_OF_ITERATIONS)

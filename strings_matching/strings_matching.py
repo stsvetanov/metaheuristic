@@ -2,32 +2,23 @@
 Generate string that is closer to the target.
 To calculate the distance between strings, compare each digits.
 Example:
-    1234 and 2235 -> 1 + 0 + 0 + 2 = 5
+    Target = 1234
+    Test = 2235
+    Estimation: 1 + 0 + 0 + 1 = 2
 
     Implemented methods:
-        random_search
+        random_search        combinations
         ga_search
 '''
 
-from random_search import random_search
-from ga_search import ga_search
-from abc_search import abc_search
-from local_search import local_search
+from utils import random_search, ga_search, abc_search, local_search
 
-TARGET = '000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
-
-print(len(TARGET))
-
+TARGET = "Lorem Ipsum is simply dummy text of the printing and typesetting industry"
 NUMBER_OF_ITERATIONS = 150
-
-POPULATION_SIZE = 1024 # Needed for ga_search only
-1
+POPULATION_SIZE = 300  # Required for ga_search only
 
 
 def main():
-    # choices = {'a': 1, 'b': 2}
-    # result = choices.get(key, 'default')
-
     user_input = input("Type: \n 1 for Random Search \n 2 for GA \n 3 for ABC \n 4 for Local Search \n")
     print('Target solution: {}'.format(TARGET))
     if user_input == '1':
@@ -35,7 +26,7 @@ def main():
     elif user_input == '2':
         ga_search(TARGET, NUMBER_OF_ITERATIONS, POPULATION_SIZE)
     elif user_input == '3':
-        abc_search(TARGET, NUMBER_OF_ITERATIONS)
+        abc_search(TARGET, NUMBER_OF_ITERATIONS, POPULATION_SIZE)
     elif user_input == '4':
         local_search(TARGET, NUMBER_OF_ITERATIONS)
 
