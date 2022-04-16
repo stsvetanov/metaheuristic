@@ -1,4 +1,6 @@
-numpy
-scipy
-pandas
-matplotlib
+numpy~=1.22.3
+scipy~=1.8.0
+pandas~=1.4.2
+matplotlib~=3.5.1
+phylopandas~=0.8.0
+biopython

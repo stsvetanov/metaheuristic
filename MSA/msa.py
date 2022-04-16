@@ -1,11 +1,12 @@
 import timeit
 
-import phylopandas as ph
+# import phylopandas as ph
 import numpy as np
-from utils import amino_acid_to_position, blosum62mt2
+from utils import amino_acid_to_position, blosum62mt2, read_fasta
 
-df1 = ph.read_fasta('H1N1_Protein_NS2_149.fa')
+# df1 = ph.read_fasta('H1N1_Protein_NS2_149.fa')
 
+df1 = read_fasta(filename='dataset/H1N1_Protein_NS2_149.fa')
 # print(df1.columns.values)
 # print(df1.info)
 

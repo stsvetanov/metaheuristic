@@ -1,4 +1,56 @@
+import string
+from random import random
+from Bio import SeqIO
+
 import numpy as np
+import pandas as pd
+
+
+def read_fasta(
+    filename,
+    schema='fasta',
+    seq_label='sequence',
+    use_uids=False,
+    **kwargs):
+    """Use BioPython's sequence parsing module to convert any file format to
+    a Pandas DataFrame.
+
+    The resulting DataFrame has the following columns:
+        - name
+        - id
+        - description
+        - sequence
+    """
+
+    # Prepare DataFrame fields.
+    data = {
+        'id': [],
+        seq_label: [],
+        'description': [],
+        'label': []
+    }
+    if use_uids:
+        data['uid'] = []
+
+    # Parse Fasta file.
+    for i, s in enumerate(SeqIO.parse(filename, format=schema, **kwargs)):
+        data['id'].append(s.id)
+        data[seq_label].append(str(s.seq))
+        data['description'].append(s.description)
+        data['label'].append(s.name)
+
+        if use_uids:
+            data['uid'].append(get_random_id(10))
+
+    # Port to DataFrame.
+    return pd.DataFrame(data)
+
+
+def get_random_id(length):
+    """Generate a random, alpha-numerical id."""
+    alphabet = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    return ''.join(random.choice(alphabet) for _ in range(length))
+
 
 def estimate_solution(solution):
     pass
