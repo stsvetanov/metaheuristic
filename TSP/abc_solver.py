@@ -4,71 +4,69 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.spatial.distance import squareform, pdist
 
+
 class ABCSolver:
     def __init__(self, file_name, number_of_iterations, population_size):
         self.file_name = file_name
         self.number_of_iterations = number_of_iterations
         self.population_size = population_size
-        self.scouts = int(self.population_size / 3)
-        self.workers = self.population_size - self.scouts
+        self.number_of_scouts = int(self.population_size / 5)
+        self.number_of_workers = self.population_size - self.number_of_scouts
         self.best_solution = None
-        self.number_of_elites = int(self.population_size / 10)
+        self.number_of_elite_solutions = int(self.population_size / 20)
+        self.distance_matrix = None
+        self.number_of_cities = None
 
-    def load_coordinates(self, filename: str) -> list:
-        with open(filename, 'r', encoding='utf-8') as f:
-            data = [[int(coordinates) for coordinates in line.split()] for line in f]
-        return squareform(pdist(np.array(data), 'euclidean'))
+    def load_coordinates(self) -> list:
+        data = np.loadtxt(self.file_name)
+        # with open(self.file_name) as file_handler:
+        #     data = [[int(digit) for digit in line.split()] for line in file_handler]
+        return squareform(pdist(data, 'euclidean'))
 
-    def generate_random_solution(self, number_of_cities):
-        return random.sample(range(0, number_of_cities), number_of_cities)
+    def generate_random_solution(self):
+        return random.sample(range(0, self.number_of_cities), self.number_of_cities)
 
-    def generate_population(self, number_of_cities, population_size):
-        return [self.generate_random_solution(number_of_cities) for _ in range(population_size)]
+    def generate_population(self, population_size):
+        return [self.generate_random_solution() for _ in range(population_size)]
 
-    def estimate_population(self, population: list, distance_matrix: list) -> dict:
-        estimated_population = {tuple(solution): self.estimate_solution(solution, distance_matrix) for solution in
+    def estimate_population(self, population: list) -> dict:
+        estimated_population = {tuple(solution): self.estimate_solution(solution) for solution in
                                 population}
         sorted_population = sorted(estimated_population, key=lambda x: estimated_population[x])
         return sorted_population
 
-    def workers_activity(self, workers, selected_global_solutions, distance_matrix):
+    def workers_activity(self, elite_solutions):
         solutions = []
-        counter = len(selected_global_solutions)
-        for solution in selected_global_solutions:
-            for _ in range(workers):
-                solutions.append(self.local_search(counter, solution, distance_matrix))
-            counter = int(counter / 5)
+        counter = self.number_of_workers
+        for solution in elite_solutions:
+            solutions.append(self.local_search(counter, solution))
+            counter = int(counter / 1.5)
             if counter < 2:
                 break
         return solutions
 
-    def create_local_solution(self, solution):
-        mutationRate = 0.03
-        solution = list(solution)
-        for swapped in range(len(solution)):
-            if random.random() < mutationRate:
-                swapWith = int(random.random() * len(solution))
-                solution[swapWith], solution[swapped] = solution[swapped], solution[swapWith]
-        return solution
-
-    def local_search(self, number_of_iter, solution, distance_matrix):
-        solution_value = self.estimate_solution(solution, distance_matrix)
-        # print(f"Initial solution: {solution} - {solution_value}")
-        for i in range(number_of_iter):
+    def local_search(self, counter, solution):
+        solution_value = self.estimate_solution(solution)
+        for i in range(counter):
             next_solution = self.create_local_solution(solution)
-            next_solution_value = self.estimate_solution(next_solution, distance_matrix)
+            next_solution_value = self.estimate_solution(next_solution)
             if next_solution_value < solution_value:
                 solution = next_solution
                 solution_value = next_solution_value
-            # elif random.randint(1, number_of_iter) < i/10:
-            #     solution = next_solution
-            #     solution_value = next_solution_value
         return solution
 
-    def estimate_solution(self, solution: list, distance_matrix: list) -> int:
+    def create_local_solution(self, solution):
+        solution = list(solution)
+        for swapped in range(len(solution)):
+            swapWith = int(random.random() * len(solution))
+            solution[swapWith], solution[swapped] = solution[swapped], solution[swapWith]
+        return solution
+
+
+    def estimate_solution(self, solution: list) -> int:
         distance = 0
         for i in range(len(solution)):
-            distance += distance_matrix[solution[i - 1]][solution[i]]
+            distance += self.distance_matrix[solution[i - 1]][solution[i]]
         return distance
 
     def plotTSP(self, path, points, num_iters=1):
@@ -93,26 +91,25 @@ class ABCSolver:
         plt.show()
 
     def run(self):
-        distance_matrix = self.load_coordinates(self.file_name)
-        # global_solutions = generate_population(number_of_cities, scouts)
-        global_solutions = self.generate_population(len(distance_matrix), self.scouts)
+        self.distance_matrix = self.load_coordinates()
+        self.number_of_cities = len(self.distance_matrix)
+        initial_population = self.generate_population(self.number_of_scouts)
 
         for iterations_counter in range(self.number_of_iterations):
-            estimated_global_solutions = self.estimate_population(global_solutions, distance_matrix)
-            local_solutions = self.workers_activity(self.workers, estimated_global_solutions[:self.number_of_elites], distance_matrix)
-            estimated_local_solutions = self.estimate_population(local_solutions, distance_matrix)
+            estimated_population = self.estimate_population(initial_population)
+            elite_solutions = estimated_population[:self.number_of_elite_solutions]
+            local_solutions = self.workers_activity(elite_solutions)
+            estimated_local_solutions = self.estimate_population(local_solutions)
 
-            new_population_size = len(local_solutions) - len(estimated_local_solutions)
-            new_population = self.generate_population(len(distance_matrix), new_population_size * 10)
-            estimated_new_population = self.estimate_population(new_population, distance_matrix)
-            for solution in estimated_new_population[:int(new_population_size / 10)]:
+            new_population = self.generate_population(self.number_of_scouts)
+            estimated_new_population = self.estimate_population(new_population)
+            for solution in estimated_new_population[:self.number_of_elite_solutions]:
                 estimated_local_solutions.append(solution)
 
-            elite_solutions = estimated_local_solutions[:self.number_of_elites]
+            elite_solutions = estimated_local_solutions[:self.number_of_elite_solutions]
             best_solution_in_generation = estimated_local_solutions[0]
-            best_solution_in_generation_score = self.estimate_solution(best_solution_in_generation, distance_matrix)
+            best_solution_in_generation_score = self.estimate_solution(best_solution_in_generation)
 
-            # print(f"Best solution in iter {iterations_counter} is {best_solution_in_generation} -> {best_solution_in_generation_score}")
             print(f"Best solution score in iter {iterations_counter} is {best_solution_in_generation_score}")
             print(f"Number of local solutions: {len(local_solutions)}")
             print(f"Number of local estimated_local_solutions: {len(estimated_local_solutions)}")
@@ -125,13 +122,8 @@ class ABCSolver:
             if best_solution_in_generation_score < best_solution_score:
                 self.best_solution = best_solution_in_generation
                 best_solution_score = best_solution_in_generation_score
-            # elif random.randint(1, number_of_iterations) < iterations_counter:
-            #     elite_solutions.append(best_solution_in_generation)
 
-            if self.estimate_solution(self.best_solution, distance_matrix) == 0:
-                break
-
-            global_solutions = elite_solutions
-            self.plotTSP(self.best_solution, distance_matrix)
+            initial_population = elite_solutions
+            self.plotTSP(self.best_solution, self.distance_matrix)
 
         return self.best_solution, best_solution_score
