@@ -40,7 +40,7 @@ class ABCSolver:
         counter = self.number_of_workers
         for solution in elite_solutions:
             solutions.append(self.local_search(counter, solution))
-            counter = int(counter / 1.5)
+            counter = int(counter / 2)
             if counter < 2:
                 break
         return solutions
@@ -97,23 +97,16 @@ class ABCSolver:
 
         for iterations_counter in range(self.number_of_iterations):
             estimated_population = self.estimate_population(initial_population)
-            elite_solutions = estimated_population[:self.number_of_elite_solutions]
-            local_solutions = self.workers_activity(elite_solutions)
+            # elite_solutions = estimated_population[:self.number_of_elite_solutions]
+            local_solutions = self.workers_activity(estimated_population)
             estimated_local_solutions = self.estimate_population(local_solutions)
 
-            new_population = self.generate_population(self.number_of_scouts)
-            estimated_new_population = self.estimate_population(new_population)
-            for solution in estimated_new_population[:self.number_of_elite_solutions]:
-                estimated_local_solutions.append(solution)
-
-            elite_solutions = estimated_local_solutions[:self.number_of_elite_solutions]
             best_solution_in_generation = estimated_local_solutions[0]
             best_solution_in_generation_score = self.estimate_solution(best_solution_in_generation)
 
             print(f"Best solution score in iter {iterations_counter} is {best_solution_in_generation_score}")
             print(f"Number of local solutions: {len(local_solutions)}")
             print(f"Number of local estimated_local_solutions: {len(estimated_local_solutions)}")
-            print(f"Number of elites: {len(elite_solutions)}")
 
             if self.best_solution is None:
                 self.best_solution = best_solution_in_generation
@@ -123,7 +116,10 @@ class ABCSolver:
                 self.best_solution = best_solution_in_generation
                 best_solution_score = best_solution_in_generation_score
 
-            initial_population = elite_solutions
+            new_population = self.generate_population(self.number_of_scouts)
+            estimated_new_population = self.estimate_population(new_population)
+
+            initial_population = estimated_local_solutions + estimated_new_population[:self.number_of_elite_solutions]
             self.plotTSP(self.best_solution, self.distance_matrix)
 
         return self.best_solution, best_solution_score
