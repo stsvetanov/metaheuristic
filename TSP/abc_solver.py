@@ -4,6 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.spatial.distance import squareform, pdist
 
+
 class ABCSolver:
     def __init__(self, file_name, number_of_iterations, population_size):
         self.file_name = file_name
