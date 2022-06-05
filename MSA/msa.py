@@ -1,30 +1,15 @@
-import timeit
-
-# import phylopandas as ph
 import numpy as np
-from utils import amino_acid_to_position, blosum62mt2, read_fasta
+from utils import read_fasta, estimate_population, generate_population
 
-# df1 = ph.read_fasta('H1N1_Protein_NS2_149.fa')
+initial_alignment_df = read_fasta(filename='dataset/BB11001-m.fa')
 
-df1 = read_fasta(filename='dataset/H1N1_Protein_NS2_149.fa')
-# print(df1.columns.values)
-# print(df1.info)
+# initial_alignment = [np.fromstring(sequence, dtype=np.uint8) for sequence in initial_alignment_df.get("sequence")]
+initial_alignment = [sequence for sequence in initial_alignment_df.get("sequence")]
 
-alignment = [np.fromstring(sequence, dtype=np.uint8) for sequence in df1.get("sequence")]
+# initial_alignment = np.array(initial_alignment)
 
-alignment = np.array(alignment)
-
-sum_total = 0
-
-start_time = timeit.default_timer()
-for column in alignment.T[:5]:
-    column_len = len(column)
-    sum_column = 0
-    for i in range(column_len - 1):
-        position_first = amino_acid_to_position.get(column[i])
-        position_second = amino_acid_to_position.get(column[i + 1])
-        sum_column += blosum62mt2[position_first][position_second]
-    sum_total += sum_column
-
-print(sum_total)
-print(timeit.default_timer() - start_time)
+population = generate_population(size=20, alignment=initial_alignment)
+print(population)
+print(estimate_population(population))
+#
+# print(f'Estimated sequence value: {estimated_value}')
