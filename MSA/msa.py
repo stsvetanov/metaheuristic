@@ -26,5 +26,5 @@ for column in alignment.T[:5]:
         sum_column += blosum62mt2[position_first][position_second]
     sum_total += sum_column
 
-print(sum_total)
-print(timeit.default_timer() - start_time)
+print(f'Estimated sequence value: {sum_total}')
+print(f'{timeit.default_timer() - start_time} s')
