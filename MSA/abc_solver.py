@@ -56,11 +56,6 @@ class ABCSolver:
         for index, sequence in enumerate(solution):
             if len(sequence) < alignment_len:
                 solution[index] += '-' * (alignment_len - len(sequence))
-                # for i in range(max_seq_len - len(sequence)):
-                #     if random.random() < 0.5:
-                #         new_alignment[index] += '-'
-                #     else:
-                #         new_alignment[index] = '-' + new_alignment[index]
         return solution
 
     def generate_population(self):
@@ -68,7 +63,7 @@ class ABCSolver:
 
     def estimate_population(self):
         estimated_population = {tuple(solution): estimate_solution(solution) for solution in self.population}
-        sorted_population = sorted(estimated_population, key=lambda x: estimated_population[x])
+        sorted_population = sorted(estimated_population, key=lambda x: estimated_population[x], reverse=True)
         return sorted_population
 
     def workers_activity(self, elite_solutions):
@@ -82,16 +77,13 @@ class ABCSolver:
         return solutions
 
     def local_search(self, counter, solution):
-        solution_value = estimate_solution(solution)
         for i in range(counter):
+            solution_value = estimate_solution(solution)
             next_solution = self.create_solution(solution)
             next_solution_value = estimate_solution(next_solution)
             if next_solution_value > solution_value:
                 print(solution_value, next_solution_value)
-                print(next_solution)
-                print(next_solution)
                 solution = next_solution
-                solution_value = next_solution_value
         return solution
 
     def print_solution(self, solution):
