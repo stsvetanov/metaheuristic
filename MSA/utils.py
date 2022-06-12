@@ -6,6 +6,8 @@ import random
 import numpy as np
 import pandas as pd
 
+GAP_PENALTY = -1
+
 
 def generate_solution(alignment):
     new_alignment = []
@@ -75,6 +77,7 @@ def read_fasta(
     # Port to DataFrame.
     return pd.DataFrame(data)
 
+
 def get_random_id(length):
     """Generate a random, alpha-numerical id."""
     alphabet = string.ascii_uppercase + string.ascii_lowercase + string.digits
@@ -88,6 +91,7 @@ def estimate_solution(alignment):
         sum_column = 0
         for column in range(sequence_len - 1):
             if alignment[index_sequence][column] == '-' or alignment[index_sequence + 1][column] == '-':
+                sum_column += GAP_PENALTY
                 continue
             position_first = amino_acid_to_position.get(ord(alignment[index_sequence][column]))
             position_second = amino_acid_to_position.get(ord(alignment[index_sequence + 1][column]))

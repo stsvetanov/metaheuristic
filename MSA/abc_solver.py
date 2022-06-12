@@ -26,14 +26,14 @@ class ABCSolver:
 
     def write_fasta(self):
         self.initial_alignment_df = read_fasta(self.file_name)
-        with open("BB11001.alm", "w") as file_handler:
+        with open("BB11001.aln", "w") as file_handler:
             for index, id in enumerate(self.initial_alignment_df.get("id")):
                 file_handler.write(">" + id + "\n")
                 file_handler.write(self.best_solution[index] + "\n")
 
     def create_solution(self, solution=None):
         alignment_len = 0
-        if not solution:
+        if not solution: # generate solution from the initial alignment
             solution = []
             for sequence in self.initial_solution:
                 seq_len = len(sequence)
@@ -47,7 +47,7 @@ class ABCSolver:
                 sequence_len = len(sequence)
                 if sequence_len > alignment_len:
                     alignment_len = sequence_len
-        else:
+        else: # generate solution from the given one
             sequence_number = random.randint(0, self.number_of_seq_in_alignment - 1)
             solution = list(solution)
             sequence = solution[sequence_number]
@@ -90,26 +90,29 @@ class ABCSolver:
             next_solution = self.create_solution(solution)
             next_solution_value = estimate_solution(next_solution)
             if next_solution_value > solution_value:
-                print(solution_value, next_solution_value)
                 solution = next_solution
         return solution
 
     def print_solution(self, solution):
-        for index, sequence in enumerate(self.best_solution):
-            print(f'{index}: {sequence}')
+        if not solution:
+            solution = self.best_solution
+
+        for index, sequence in enumerate(solution):
+            print(f'{index}:\t {sequence}')
 
     def run(self):
+        self.population = self.generate_population()
         for iterations_counter in range(self.number_of_iterations):
-            self.population = self.generate_population()
             estimated_solutions = self.estimate_population()
+            print(estimate_solution(estimated_solutions[0]))
             self.population = self.workers_activity(estimated_solutions)
             estimated_local_solutions = self.estimate_population()
-            print(estimated_local_solutions)
+            self.print_solution(estimated_local_solutions[0])
 
             best_solution_in_generation = estimated_local_solutions[0]
             best_solution_in_generation_score = estimate_solution(best_solution_in_generation)
 
-            print(f"Best solution in iter {iterations_counter} is {best_solution_in_generation}: {best_solution_in_generation_score}")
+            print(f"Iter: {iterations_counter}, Score: {best_solution_in_generation_score}")
             print(f"Number of local solutions: {len(estimated_local_solutions)}")
             print(f"Number of local estimated_local_solutions: {len(estimated_local_solutions)}")
 
