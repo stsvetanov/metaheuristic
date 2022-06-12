@@ -75,7 +75,6 @@ def read_fasta(
     # Port to DataFrame.
     return pd.DataFrame(data)
 
-
 def get_random_id(length):
     """Generate a random, alpha-numerical id."""
     alphabet = string.ascii_uppercase + string.ascii_lowercase + string.digits

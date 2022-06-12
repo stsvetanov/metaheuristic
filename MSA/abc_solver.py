@@ -18,10 +18,18 @@ class ABCSolver:
         self.initial_solution = self.load_sequences()
         self.population = None
         self.number_of_seq_in_alignment = len(self.initial_solution)
+        self.initial_alignment_df = None
 
     def load_sequences(self) -> list:
-        initial_alignment_df = read_fasta(self.file_name)
-        return [sequence for sequence in initial_alignment_df.get("sequence")]
+        self.initial_alignment_df = read_fasta(self.file_name)
+        return [sequence for sequence in self.initial_alignment_df.get("sequence")]
+
+    def write_fasta(self):
+        self.initial_alignment_df = read_fasta(self.file_name)
+        with open("BB11001.alm", "w") as file_handler:
+            for index, id in enumerate(self.initial_alignment_df.get("id")):
+                file_handler.write(">" + id + "\n")
+                file_handler.write(self.best_solution[index] + "\n")
 
     def create_solution(self, solution=None):
         alignment_len = 0
@@ -116,3 +124,5 @@ class ABCSolver:
 
         self.print_solution(self.best_solution)
         print(self.best_solution_value)
+
+        self.write_fasta()
