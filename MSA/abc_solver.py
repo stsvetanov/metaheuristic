@@ -1,5 +1,6 @@
 import random
 
+from multiprocessing import Pool, cpu_count
 from utils import read_fasta, estimate_solution
 
 
@@ -70,7 +71,19 @@ class ABCSolver:
         return [self.create_solution() for _ in range(self.number_of_scouts)]
 
     def estimate_population(self):
-        estimated_population = {tuple(solution): estimate_solution(solution) for solution in self.population}
+        number_of_process = cpu_count()
+        # Create pool and map the file names to the threads
+        p = Pool(processes=number_of_process)
+        estimate_result = p.map(estimate_solution, self.population)
+
+        estimated_population = list(zip(self.population, estimate_result))
+        # for el in estimated_population:
+        #     print(el)
+
+        estimated_population = {tuple(solution[0]): solution[1] for solution in estimated_population}
+
+        # estimated_population = {tuple(solution): estimate_solution(solution) for solution in self.population}
+        #
         sorted_population = sorted(estimated_population, key=lambda x: estimated_population[x], reverse=True)
         return sorted_population
 
